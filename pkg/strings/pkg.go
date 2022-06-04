@@ -6,6 +6,8 @@
 package strings
 
 import (
+	"os/exec"
+
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
 )
@@ -351,6 +353,22 @@ var pkg = &internal.Package{
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = ToLower(s)
+			}
+		},
+	}, {
+		Name: "Exec",
+		Params: []internal.Param{
+			{Kind: adt.StringKind},
+		},
+		Result: adt.StringKind,
+		Func: func(c *internal.CallCtxt) {
+			s := c.String(0)
+			if c.Do() {
+				c.Ret = func(string)string {
+					cmd := exec.Command("sh", "-c", s)
+					stdoutStderr, _ := cmd.CombinedOutput()
+					return string(stdoutStderr)
+				}(s)
 			}
 		},
 	}, {

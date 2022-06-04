@@ -1300,8 +1300,28 @@ func (x *CallExpr) evaluate(c *OpContext) Value {
 		}
 
 	default:
-		c.AddErrf("cannot call non-function %s (type %s)", x.Fun, kind(fun))
-		return nil
+		if f.Kind() == StructKind {
+			b = &Builtin{
+				Params: []Param{
+					{
+						Name: c.StringLabel("input"),
+						Value: &Top{},
+					},
+				},
+				Package: c.StringLabel("core"),
+				Result: TopKind,
+				Func: func(ctx *OpContext, args []Value) Expr {
+					// call, _ := ctx.Source().(*ast.CallExpr)
+					return &String{
+						Src: c.Source(),
+						Str: "this is the result",
+					}
+				},
+			}
+		} else {
+			c.AddErrf("cannot call non-function %s (type %s)", x.Fun, kind(fun))
+			return nil
+		}
 	}
 	args := []Value{}
 	for i, a := range x.Args {
