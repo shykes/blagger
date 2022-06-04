@@ -47,4 +47,5 @@ import (
 	_ "cuelang.org/go/pkg/tool/http"
 	_ "cuelang.org/go/pkg/tool/os"
 	_ "cuelang.org/go/pkg/uuid"
+	_ "cuelang.org/go/pkg/dagger"
 )

@@ -1312,10 +1312,28 @@ func (x *CallExpr) evaluate(c *OpContext) Value {
 				Result: TopKind,
 				Func: func(ctx *OpContext, args []Value) Expr {
 					// call, _ := ctx.Source().(*ast.CallExpr)
-					return &String{
-						Src: c.Source(),
-						Str: "this is the result",
+					spec, ok := f.(Decl)
+					if !ok {
+						return c.NewErrf("not a struct")
 					}
+					return c.NewErrf("<<<%#v>>>", spec)
+				//	return &StructLit{
+				//		Src: c.Source(),
+				//		Decls: []Decl{
+				//			&Field{
+				//				Label: MakeStringLabel(c, "result"),
+				//				Value: &String{
+				//					Src: c.Source(),
+				//					Str: "this is the result",
+				//				},
+
+				//			},
+				//		},
+				//	}
+					// return &String{
+					// 	Src: c.Source(),
+					// 	Str: "this is the result",
+					// }
 				},
 			}
 		} else {
