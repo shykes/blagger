@@ -3,5 +3,5 @@ import (
 )
 
 hello: dagger.Shell({
-	script: "echo hello world | cat -en"
+	script: "echo hello world"
 })

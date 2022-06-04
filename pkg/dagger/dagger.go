@@ -23,7 +23,9 @@ import (
 )
 
 type Result struct {
+	Stdout string
 	Success bool `json:success`
+	Error string
 }
 
 func Shell(config *cue.Struct) (Result, error) {
@@ -36,13 +38,16 @@ func Shell(config *cue.Struct) (Result, error) {
 	       return Result{}, err
        }
 	cmd := exec.Command("sh", "-c", scriptStr)
-	cmd.Stdout = bytes.NewBuffer()
-	cmd.Stderr = bytes.NewBuffer()
-	err := cmd.Run()
-	return Result{
-		Stdout: cmd.Stdout,
-		Stderr: cmd.Stderr,
-
+	stdout := new(bytes.Buffer)
+	cmd.Stdout = stdout
+	cmd.Stderr = os.Stderr
+	var result Result
+	if err := cmd.Run(); err != nil {
+		result.Success = false
+		result.Error = err.Error()
+	} else {
+		result.Success = true
 	}
-	return Result{Success: true}, cmd.Run()
+	result.Stdout = stdout.String()
+	return result, err
 }
